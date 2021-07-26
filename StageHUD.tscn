@@ -1,0 +1,153 @@
+[gd_scene load_steps=15 format=2]
+
+[ext_resource path="res://assets/fonts/rubik/Rubik-Medium.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://assets/art/hud_art/protochar_hud.png" type="Texture" id=2]
+[ext_resource path="res://assets/art/hud_art/lifebar/sprite_2.png" type="Texture" id=3]
+[ext_resource path="res://assets/art/hud_art/lifebar/sprite_0.png" type="Texture" id=4]
+[ext_resource path="res://assets/art/hud_art/lifebar/sprite_1.png" type="Texture" id=5]
+[ext_resource path="res://StageHUD.gd" type="Script" id=6]
+[ext_resource path="res://assets/fonts/rubik/Rubik-BoldItalic.ttf" type="DynamicFontData" id=7]
+[ext_resource path="res://assets/art/hud_art/lifebar/sprite_4.png" type="Texture" id=8]
+[ext_resource path="res://assets/art/hud_art/lifebar/sprite_5.png" type="Texture" id=9]
+[ext_resource path="res://assets/art/hud_art/lifebar/sprite_7.png" type="Texture" id=10]
+[ext_resource path="res://assets/art/hud_art/lifebar/sprite_6.png" type="Texture" id=11]
+
+[sub_resource type="DynamicFont" id=1]
+size = 44
+outline_size = 6
+outline_color = Color( 0.184314, 0.0627451, 0.247059, 1 )
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 50
+outline_size = 6
+outline_color = Color( 0.184314, 0.0627451, 0.247059, 1 )
+font_data = ExtResource( 7 )
+
+[sub_resource type="SpriteFrames" id=3]
+animations = [ {
+"frames": [ ExtResource( 11 ) ],
+"loop": true,
+"name": "2_round",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 8 ) ],
+"loop": true,
+"name": "0_round",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 9 ) ],
+"loop": true,
+"name": "1_round",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 10 ) ],
+"loop": true,
+"name": "3_round",
+"speed": 5.0
+} ]
+
+[node name="StageHUD" type="CanvasLayer"]
+script = ExtResource( 6 )
+
+[node name="Player1Char" type="Label" parent="."]
+margin_left = 100.0
+margin_top = 35.0
+margin_right = 300.0
+margin_bottom = 80.0
+custom_fonts/font = SubResource( 1 )
+text = "ProtoChar"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Player2Char" type="Label" parent="."]
+margin_left = 700.0
+margin_top = 35.0
+margin_right = 900.0
+margin_bottom = 88.9932
+custom_fonts/font = SubResource( 1 )
+text = "ProtoChar"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Player1Lifebar" type="TextureProgress" parent="."]
+margin_left = 23.367
+margin_top = 32.0
+margin_right = 423.367
+margin_bottom = 232.0
+max_value = 1000.0
+value = 1000.0
+texture_under = ExtResource( 4 )
+texture_over = ExtResource( 5 )
+texture_progress = ExtResource( 3 )
+nine_patch_stretch = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Player2Lifebar" type="TextureProgress" parent="."]
+margin_left = 1001.26
+margin_top = 30.238
+margin_right = 1401.26
+margin_bottom = 230.238
+rect_scale = Vector2( -1, 1 )
+max_value = 1000.0
+value = 1000.0
+texture_under = ExtResource( 4 )
+texture_over = ExtResource( 5 )
+texture_progress = ExtResource( 3 )
+nine_patch_stretch = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Player1CharImg" type="TextureRect" parent="."]
+margin_left = 21.3122
+margin_top = 23.1084
+margin_right = 85.3122
+margin_bottom = 87.1084
+texture = ExtResource( 2 )
+stretch_mode = 6
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Player2CharImg" type="TextureRect" parent="."]
+margin_left = 996.413
+margin_top = 24.4432
+margin_right = 1060.41
+margin_bottom = 88.4432
+rect_scale = Vector2( -1, 1 )
+texture = ExtResource( 2 )
+stretch_mode = 6
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="Message" type="Label" parent="."]
+margin_left = 350.0
+margin_top = 180.0
+margin_right = 675.0
+margin_bottom = 240.0
+custom_fonts/font = SubResource( 2 )
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Player1Rounds" type="AnimatedSprite" parent="."]
+position = Vector2( 95.3517, 200.239 )
+scale = Vector2( 4, 4 )
+frames = SubResource( 3 )
+animation = "0_round"
+
+[node name="Player2Rounds" type="AnimatedSprite" parent="."]
+position = Vector2( 917.495, 203.417 )
+scale = Vector2( 4, 4 )
+frames = SubResource( 3 )
+animation = "0_round"
+flip_h = true

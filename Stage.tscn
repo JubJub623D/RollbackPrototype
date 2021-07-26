@@ -1,0 +1,34 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Stage.gd" type="Script" id=2]
+[ext_resource path="res://StageHUD.tscn" type="PackedScene" id=3]
+[ext_resource path="res://assets/art/bg.png" type="Texture" id=4]
+
+[node name="Stage" type="Node"]
+script = ExtResource( 2 )
+
+[node name="TextureRect" type="TextureRect" parent="."]
+show_behind_parent = true
+light_mask = 2
+margin_right = 1025.0
+margin_bottom = 600.0
+texture = ExtResource( 4 )
+stretch_mode = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="StageArea" type="Area2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StageArea"]
+polygon = PoolVector2Array( 1025, 0, 1025, 550, 0, 550, 0, 0, -300, 0, -300, 646.01, 1325, 639.336, 1325, 0 )
+
+[node name="StageHUD" parent="." instance=ExtResource( 3 )]
+
+[node name="Player1" parent="." instance=ExtResource( 1 )]
+
+[node name="Player2" parent="." instance=ExtResource( 1 )]
+
+[connection signal="Player_ko" from="Player1" to="." method="_on_Player1_Player_ko"]
+[connection signal="Player_ko" from="Player2" to="." method="_on_Player2_Player_ko"]
