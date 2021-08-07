@@ -20,6 +20,12 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
+	stage_process()
+	
+	$Player1/ProtoChar.handle_inputs($Player1.parse_input())
+	$Player2/ProtoChar.handle_inputs($Player2.parse_input())
+
+func stage_process():
 	stage_collision()
 	
 	if $Player1/ProtoChar.position.x < $Player2/ProtoChar.position.x:
@@ -28,7 +34,7 @@ func _process(delta):
 	else:
 		$Player1/ProtoChar.facing(-1)
 		$Player2/ProtoChar.facing(1)
-		
+	
 	$Player1/ProtoChar.check_hitboxes($Player2/ProtoChar.hitboxes)
 	$Player2/ProtoChar.check_hitboxes($Player1/ProtoChar.hitboxes)
 	
@@ -86,3 +92,4 @@ func stage_collision():
 			$Player2/ProtoChar.position.x = 0 + width
 		if p2_x > 825:
 			$Player2/ProtoChar.position.x = 1025 - width
+

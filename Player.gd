@@ -2,7 +2,8 @@ extends Node
 
 signal Player_ko
 # Declare member variables here. Examples:
-export var player_num = 1;
+#export var player_num = 1;
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -11,7 +12,7 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
-	$ProtoChar.handle_inputs(parse_input())
+	pass
 
 func parse_input() -> String:
 	var parsed_string = "00"

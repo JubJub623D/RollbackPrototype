@@ -21,3 +21,4 @@ func _on_LocalVs_pressed():
 func _on_OnlineVs_pressed():
 	var gui = OnlineVsGUI.instance()
 	add_child(gui)
+	

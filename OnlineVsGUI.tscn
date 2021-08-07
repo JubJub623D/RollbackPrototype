@@ -1,20 +1,24 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://assets/fonts/rubik/Rubik-Medium.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://assets/art/onlinevsbg.png" type="Texture" id=2]
 [ext_resource path="res://OnlineVs.gd" type="Script" id=3]
 [ext_resource path="res://assets/fonts/rubik/Rubik-LightItalic.ttf" type="DynamicFontData" id=4]
-[ext_resource path="res://assets/fonts/rubik/Rubik-Black.ttf" type="DynamicFontData" id=5]
+[ext_resource path="res://assets/fonts/rubik/Rubik-Light.ttf" type="DynamicFontData" id=5]
 
 [sub_resource type="DynamicFont" id=1]
 size = 40
 font_data = ExtResource( 1 )
 
 [sub_resource type="DynamicFont" id=2]
+size = 32
+font_data = ExtResource( 5 )
+
+[sub_resource type="DynamicFont" id=3]
 size = 30
 font_data = ExtResource( 4 )
 
-[sub_resource type="DynamicFont" id=3]
+[sub_resource type="DynamicFont" id=4]
 size = 32
 font_data = ExtResource( 5 )
 
@@ -104,26 +108,37 @@ margin_bottom = 264.0
 custom_fonts/font = SubResource( 1 )
 text = "Join"
 
-[node name="Status" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="GetIP" type="Button" parent="MarginContainer/VBoxContainer"]
 margin_top = 279.0
 margin_right = 825.0
-margin_bottom = 316.0
+margin_bottom = 323.0
 custom_fonts/font = SubResource( 2 )
+text = "Get your IPv4"
+
+[node name="Status" type="Label" parent="MarginContainer/VBoxContainer"]
+margin_top = 338.0
+margin_right = 825.0
+margin_bottom = 375.0
+custom_fonts/font = SubResource( 3 )
 align = 1
 
 [node name="Back" type="Button" parent="."]
 anchor_right = 0.033
 anchor_bottom = 0.078
 margin_left = 103.122
-margin_top = 469.237
+margin_top = 470.296
 margin_right = 185.33
-margin_bottom = 466.437
-custom_fonts/font = SubResource( 3 )
+margin_bottom = 467.496
+custom_fonts/font = SubResource( 4 )
 text = "back"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="IPify" type="HTTPRequest" parent="."]
+
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Host" to="." method="_on_Host_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Join" to="." method="_on_Join_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/GetIP" to="." method="_on_GetIP_pressed"]
 [connection signal="pressed" from="Back" to="." method="_on_Back_pressed"]
+[connection signal="request_completed" from="IPify" to="." method="_on_IPify_request_completed"]

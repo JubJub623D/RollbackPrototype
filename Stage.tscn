@@ -5,7 +5,8 @@
 [ext_resource path="res://StageHUD.tscn" type="PackedScene" id=3]
 [ext_resource path="res://assets/art/bg.png" type="Texture" id=4]
 
-[node name="Stage" type="Node"]
+[node name="Stage" type="CanvasLayer"]
+layer = 3
 script = ExtResource( 2 )
 
 [node name="TextureRect" type="TextureRect" parent="."]
@@ -25,6 +26,7 @@ __meta__ = {
 polygon = PoolVector2Array( 1025, 0, 1025, 550, 0, 550, 0, 0, -300, 0, -300, 646.01, 1325, 639.336, 1325, 0 )
 
 [node name="StageHUD" parent="." instance=ExtResource( 3 )]
+layer = 4
 
 [node name="Player1" parent="." instance=ExtResource( 1 )]
 

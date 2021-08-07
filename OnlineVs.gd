@@ -1,6 +1,6 @@
 extends Control
 
-var Stage = preload("res://Stage.tscn")
+#var OnlineStage = preload("res://OnlineStage.tscn")
 
 const DEFAULT_IP = '127.0.0.1'
 const DEFAULT_PORT = '5000'
@@ -9,6 +9,7 @@ onready var address = $MarginContainer/VBoxContainer/GridContainer/IPAddr
 onready var port = $MarginContainer/VBoxContainer/GridContainer/Port
 onready var host_button = $MarginContainer/VBoxContainer/Host
 onready var join_button = $MarginContainer/VBoxContainer/Join
+onready var getip_button = $MarginContainer/VBoxContainer/GetIP
 onready var status = $MarginContainer/VBoxContainer/Status
 
 var peer = null
@@ -31,8 +32,9 @@ func _ready():
 # Callback from SceneTree.
 func _player_connected(_id):
 	# Someone connected, start the game!
-	var stage = Stage.instance()
-	get_tree().get_root().add_child(stage)
+	print("hi! a client connected!")
+	#var stage = OnlineStage.instance()
+	#get_tree().get_root().add_child(stage)
 	hide()
 
 
@@ -45,7 +47,8 @@ func _player_disconnected(_id):
 
 # Callback from SceneTree, only for clients (not server).
 func _connected_ok():
-	pass
+	print("hi! connected to a server!")
+
 
 
 # Callback from SceneTree, only for clients (not server).
@@ -79,6 +82,7 @@ func end_game(with_error = ""):
 	get_tree().set_network_peer(null) # Remove peer.
 	host_button.set_disabled(false)
 	join_button.set_disabled(false)
+	getip_button.set_disabled(false)
 
 	show()
 	set_status(with_error)
@@ -87,14 +91,15 @@ func end_game(with_error = ""):
 func _on_Host_pressed():
 	peer = NetworkedMultiplayerENet.new()
 	peer.set_compression_mode(NetworkedMultiplayerENet.COMPRESS_RANGE_CODER)
-	var err = peer.create_server(int(DEFAULT_IP), 1) 
+	var err = peer.create_server(int(port.get_text()), 1) 
 	if err != OK:
-		set_status(err)
+		set_status(String(err))
 		return
 		
 	get_tree().set_network_peer(peer)
 	host_button.set_disabled(true)
 	join_button.set_disabled(true)
+	getip_button.set_disabled(true)
 	set_status("Waiting for opponent to connect...")
 
 func _on_Join_pressed():
@@ -102,16 +107,29 @@ func _on_Join_pressed():
 	if not ip.is_valid_ip_address():
 		set_status("IP address is invalid")
 		return
-	var port_num = port.get_text()
 
 	peer = NetworkedMultiplayerENet.new()
 	peer.set_compression_mode(NetworkedMultiplayerENet.COMPRESS_RANGE_CODER)
-	var err = peer.create_client(ip, int(port_num))
+	var err = peer.create_client(ip, int(port.get_text()))
 	if err != OK:
-		set_status(err)
+		set_status(String(err))
 		return
+	host_button.set_disabled(true)
+	join_button.set_disabled(true)
+	getip_button.set_disabled(true)
 	get_tree().set_network_peer(peer)
 
 
 func _on_Back_pressed():
 	queue_free()
+
+#IP Retrieval methods
+func _on_GetIP_pressed():
+	$IPify.request("https://api.ipify.org")
+	set_status("Fetching your IPv4 from IPify...")
+
+func _on_IPify_request_completed(result, response_code, headers, body):
+	var your_ip = body.get_string_from_utf8()
+	address.text = your_ip
+	set_status("IPv4 successfully retrieved!")
+
