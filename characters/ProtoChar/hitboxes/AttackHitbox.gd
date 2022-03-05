@@ -13,15 +13,6 @@ var yPB := 0
 var is_active := false
 var to_destroy := false
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
-
 func update_hitbox():
 	if startup > 0:
 		startup -= 1
@@ -41,3 +32,14 @@ func activate():
 
 func deactivate():
 	is_active = false
+
+func Hitbox_SaveState(stream):
+	stream.put_16(510)
+	stream.put_16(startup)
+	stream.put_16(active)
+	stream.put_16(recovery)
+
+func Hitbox_LoadState(hitbox_data):
+	startup = hitbox_data[1]
+	active = hitbox_data[2]
+	recovery = hitbox_data[3]

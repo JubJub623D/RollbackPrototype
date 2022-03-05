@@ -1,135 +1,170 @@
-extends Control
+extends Node
 
-#var OnlineStage = preload("res://OnlineStage.tscn")
+var GameState = preload("res://GameState.gd")
+var Stage = preload("res://Stage.tscn")
+var state
 
-const DEFAULT_IP = '127.0.0.1'
-const DEFAULT_PORT = '5000'
+var is_host := true
+var session_result
+var local_address
+var local_port
+var remote_address
+var remote_port
+var delayframes
 
-onready var address = $MarginContainer/VBoxContainer/GridContainer/IPAddr
-onready var port = $MarginContainer/VBoxContainer/GridContainer/Port
-onready var host_button = $MarginContainer/VBoxContainer/Host
-onready var join_button = $MarginContainer/VBoxContainer/Join
-onready var getip_button = $MarginContainer/VBoxContainer/GetIP
-onready var status = $MarginContainer/VBoxContainer/Status
+var local_player
+var remote_player
 
-var peer = null
+var game_over := false
 
-# Called when the node enters the scene tree for the first time.
+const HOST_HANDLE = 1
+const CLIENT_HANDLE = 2
+
+
 func _ready():
-	# Connect all the callbacks related to networking.
-	get_tree().connect("network_peer_connected", self, "_player_connected")
-	get_tree().connect("network_peer_disconnected", self, "_player_disconnected")
-	get_tree().connect("connected_to_server", self, "_connected_ok")
-	get_tree().connect("connection_failed", self, "_connected_fail")
-	get_tree().connect("server_disconnected", self, "_server_disconnected")
-	
-	hide_status()
-	address.text = DEFAULT_IP
-	port.text = DEFAULT_PORT
-
-#### Network callbacks from SceneTree ####
-
-# Callback from SceneTree.
-func _player_connected(_id):
-	# Someone connected, start the game!
-	print("hi! a client connected!")
-	#var stage = OnlineStage.instance()
-	#get_tree().get_root().add_child(stage)
-	hide()
-
-
-func _player_disconnected(_id):
-	if get_tree().is_network_server():
-		end_game("Client disconnected")
+	session_result = GGPO.startSession("rollbackprototype_test", 2, local_port)
+	if is_host:
+		local_player = GGPO.addPlayer(GGPO.PLAYERTYPE_LOCAL, HOST_HANDLE, local_address, local_port)
 	else:
-		end_game("Server disconnected")
+		local_player = GGPO.addPlayer(GGPO.PLAYERTYPE_LOCAL, CLIENT_HANDLE, local_address, local_port)
+	print(local_player)
+	GGPO.setFrameDelay(local_player["playerHandle"], delayframes)
+	
+	if is_host:
+		remote_player = GGPO.addPlayer(GGPO.PLAYERTYPE_REMOTE, CLIENT_HANDLE, remote_address, remote_port)
+	else:
+		remote_player = GGPO.addPlayer(GGPO.PLAYERTYPE_REMOTE, HOST_HANDLE, remote_address, remote_port)
+	
+	print(remote_player)
+	
+	state = GameState.new(Stage.instance())
+	add_child(state)
+	add_child(state.stageNode)
+	GGPO.createInstance(state, "Save_GameState")
+	state.stageNode.connect("game_over", self, "_onGameOver")
+	
+func init_onlinevs(delay, server_address, server_port, client_address, client_port, remote_id):
+	connect_signals()
+	delayframes = delay
+	
+	if remote_id == 1:
+		is_host = false
+	address_port_init(server_address, server_port, client_address, client_port, remote_id)
+	
+func address_port_init(server_address, server_port, client_address, client_port, remote_id):
+	if is_host:
+		local_address = server_address
+		local_port = server_port
+		remote_address = client_address
+		remote_port = client_port
+	else:
+		remote_address = server_address
+		remote_port = server_port
+		local_address = client_address
+		local_port = client_port
 
+func connect_signals():
+	GGPO.connect("advance_frame", self, "_onAdvanceFrame")
+	GGPO.connect("load_game_state", self, "_onLoadGameState")
+	GGPO.connect("event_disconnected_from_peer", self, "_onEventDisconnectedFromPeer")
+	GGPO.connect("save_game_state", self, "_onSaveGameState")
+	GGPO.connect("event_connected_to_peer", self, "_onEventConnectedToPeer")
+	
+	GGPO.connect("event_synchronizing_with_peer", self, "_onEventSynchronizingWithPeer")
+	GGPO.connect("event_synchronized_with_peer", self, "_onEventSynchronizedWithPeer")
+	GGPO.connect("event_running", self, "_onEventRunning")
+	GGPO.connect("log_game_state", self, "_onLogGameState")
+	GGPO.connect("event_timesync", self, "_onEventTimesync")
+	GGPO.connect("event_connection_interrupted", self, "_onEventConnectionInterrupted")
+	GGPO.connect("event_connection_resumed", self, "_onEventConnectionResumed")
 
-# Callback from SceneTree, only for clients (not server).
-func _connected_ok():
-	print("hi! connected to a server!")
-
-
-
-# Callback from SceneTree, only for clients (not server).
-func _connected_fail():
-	set_status("Couldn't connect")
-
-	get_tree().set_network_peer(null) # Remove peer.
-	host_button.set_disabled(false)
-	join_button.set_disabled(false)
-
-
-func _server_disconnected():
-	end_game("Server disconnected")
-
-#GUI Methods
-func set_status(txt):
-	status.text = txt
-	status.show()
-
-func hide_status():
-	status.text = ""
-	status.hide()	
-
-#Management Methods
-func end_game(with_error = ""):
-	if has_node("/root/Stage"):
-		# Erase immediately, otherwise network might show
-		# errors (this is why we connected deferred above).
-		get_node("/root/Stage").free()
-
-	get_tree().set_network_peer(null) # Remove peer.
-	host_button.set_disabled(false)
-	join_button.set_disabled(false)
-	getip_button.set_disabled(false)
-
-	show()
-	set_status(with_error)
-
-#Button Methods
-func _on_Host_pressed():
-	peer = NetworkedMultiplayerENet.new()
-	peer.set_compression_mode(NetworkedMultiplayerENet.COMPRESS_RANGE_CODER)
-	var err = peer.create_server(int(port.get_text()), 1) 
-	if err != OK:
-		set_status(String(err))
-		return
+func _physics_process(delta):
+	if !game_over:
+		GGPO.idle(1000/60 - 1)
+		var local_input = onlinevs_inputs()
+		var result 
 		
-	get_tree().set_network_peer(peer)
-	host_button.set_disabled(true)
-	join_button.set_disabled(true)
-	getip_button.set_disabled(true)
-	set_status("Waiting for opponent to connect...")
+		if local_player["playerHandle"] != GGPO.INVALID_HANDLE:
+			result = GGPO.addLocalInput(local_player["playerHandle"], local_input)
+		if result == GGPO.ERRORCODE_SUCCESS:
+			result = GGPO.synchronizeInput(2)
+			if result["result"] == GGPO.ERRORCODE_SUCCESS:
+				state.Update(result["inputs"])
+				GGPO.advanceFrame()
+	
 
-func _on_Join_pressed():
-	var ip = address.get_text()
-	if not ip.is_valid_ip_address():
-		set_status("IP address is invalid")
-		return
+func onlinevs_inputs():
+	var input = 0
+	
+	if is_host:
+		if Input.is_action_pressed("p1_left") and !Input.is_action_pressed("p1_right"):	
+			input += 400
+		elif Input.is_action_pressed("p1_right") and !Input.is_action_pressed("p1_left"):
+			input += 600	
+		if Input.is_action_just_pressed("p1_attack"):
+			input += 1
+	else:
+		if Input.is_action_pressed("p2_left") and !Input.is_action_pressed("p2_right"):
+			input += 400
+		elif Input.is_action_pressed("p2_right") and !Input.is_action_pressed("p2_left"):
+			input += 600
+		if Input.is_action_just_pressed("p2_attack"):
+			input += 1
+	
+	return input
 
-	peer = NetworkedMultiplayerENet.new()
-	peer.set_compression_mode(NetworkedMultiplayerENet.COMPRESS_RANGE_CODER)
-	var err = peer.create_client(ip, int(port.get_text()))
-	if err != OK:
-		set_status(String(err))
-		return
-	host_button.set_disabled(true)
-	join_button.set_disabled(true)
-	getip_button.set_disabled(true)
-	get_tree().set_network_peer(peer)
-
-
-func _on_Back_pressed():
+func close_game():
+	game_over = true
+	GGPO.closeSession()
 	queue_free()
 
-#IP Retrieval methods
-func _on_GetIP_pressed():
-	$IPify.request("https://api.ipify.org")
-	set_status("Fetching your IPv4 from IPify...")
+#Callbacks
 
-func _on_IPify_request_completed(result, response_code, headers, body):
-	var your_ip = body.get_string_from_utf8()
-	address.text = your_ip
-	set_status("IPv4 successfully retrieved!")
+func _onGameOver():
+	close_game()
+
+func _onAdvanceFrame(inputs):
+	state.Update(inputs)
+	GGPO.advanceFrame()
+
+func _onLoadGameState(buffer):
+	state.Load_GameState(buffer)
+
+func _onSaveGameState():
+	pass
+	
+func _onLogGameState(_filename, _buffer):
+	#print("state logged")
+	pass
+
+func _onEventConnectedToPeer(_player):
+	#print("connected!")
+	pass
+	
+func _onEventDisconnectedFromPeer(_player):
+	close_game()
+
+func _onEventSynchronizingWithPeer(_player, _count, _total):
+	#print("synchronizing...")
+	pass
+	
+func _onEventSynchronizedWithPeer(_player):
+	#print("synchronized!")
+	pass
+	
+func _onEventRunning():
+	#print("running!")
+	pass
+
+func _onEventTimesync(framesahead):
+	#print("timesync" + String(framesahead))
+	pass
+
+func _onEventConnectionInterrupted(_player, _disconnecttimeout):
+	#print("connection interrupted")
+	pass
+	
+func _onEventConnectionResumed(_player):
+	#print("connection interrupted")
+	pass
 

@@ -6,6 +6,7 @@ const rounds_to_win := 3
 var p1rounds := 0
 var p2rounds := 0
 
+signal game_over
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -16,14 +17,24 @@ func _ready():
 	yield(get_tree().create_timer(1.0), "timeout")
 	$StageHUD.hide_msg()
 	start_round()
-	
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	stage_process()
 	
-	$Player1/ProtoChar.handle_inputs($Player1.parse_input())
-	$Player2/ProtoChar.handle_inputs($Player2.parse_input())
+func Update(inputs):
+	$Player1.update(inputs[0])
+	$Player2.update(inputs[1])
+	stage_process()
+
+func Stage_SaveState(stream):
+	stream.put_16(p1rounds)
+	stream.put_16(p2rounds)
+	$Player1/ProtoChar.ProtoChar_SaveState(stream)
+	$Player2/ProtoChar.ProtoChar_SaveState(stream)
+
+func Stage_LoadState(stream):
+	p1rounds = stream.get_16()
+	p2rounds = stream.get_16()
+	$Player1/ProtoChar.ProtoChar_LoadState(stream)
+	$Player2/ProtoChar.ProtoChar_LoadState(stream)
 
 func stage_process():
 	stage_collision()
@@ -47,7 +58,7 @@ func _on_Player1_Player_ko():
 	$StageHUD.display_win(2)
 	if p2rounds >= 3:
 		yield(get_tree().create_timer(3.0), "timeout")
-		queue_free()
+		emit_signal("game_over")
 	else:		
 		yield(get_tree().create_timer(1.0), "timeout")
 		$StageHUD.hide_msg()
@@ -61,7 +72,7 @@ func _on_Player2_Player_ko():
 	$StageHUD.display_win(1)
 	if p1rounds >= 3:
 		yield(get_tree().create_timer(3.0), "timeout")
-		queue_free()
+		emit_signal("game_over")
 	else:
 		yield(get_tree().create_timer(1.0), "timeout")
 		$StageHUD.hide_msg()
@@ -92,4 +103,3 @@ func stage_collision():
 			$Player2/ProtoChar.position.x = 0 + width
 		if p2_x > 825:
 			$Player2/ProtoChar.position.x = 1025 - width
-

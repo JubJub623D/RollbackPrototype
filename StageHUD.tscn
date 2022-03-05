@@ -36,18 +36,19 @@ animations = [ {
 "name": "0_round",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 9 ) ],
-"loop": true,
-"name": "1_round",
-"speed": 5.0
-}, {
 "frames": [ ExtResource( 10 ) ],
 "loop": true,
 "name": "3_round",
 "speed": 5.0
+}, {
+"frames": [ ExtResource( 9 ) ],
+"loop": true,
+"name": "1_round",
+"speed": 5.0
 } ]
 
 [node name="StageHUD" type="CanvasLayer"]
+layer = 11
 script = ExtResource( 6 )
 
 [node name="Player1Char" type="Label" parent="."]

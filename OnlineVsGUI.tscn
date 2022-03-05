@@ -2,7 +2,7 @@
 
 [ext_resource path="res://assets/fonts/rubik/Rubik-Medium.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://assets/art/onlinevsbg.png" type="Texture" id=2]
-[ext_resource path="res://OnlineVs.gd" type="Script" id=3]
+[ext_resource path="res://OnlineVsGUI.gd" type="Script" id=3]
 [ext_resource path="res://assets/fonts/rubik/Rubik-LightItalic.ttf" type="DynamicFontData" id=4]
 [ext_resource path="res://assets/fonts/rubik/Rubik-Light.ttf" type="DynamicFontData" id=5]
 
@@ -54,26 +54,26 @@ __meta__ = {
 margin_left = 100.0
 margin_top = 85.0
 margin_right = 925.0
-margin_bottom = 515.0
+margin_bottom = 528.0
 custom_constants/separation = 15
 
 [node name="GridContainer" type="GridContainer" parent="MarginContainer/VBoxContainer"]
 margin_right = 825.0
-margin_bottom = 126.0
+margin_bottom = 194.0
 custom_constants/vseparation = 10
 custom_constants/hseparation = 50
 columns = 2
 
 [node name="Label" type="Label" parent="MarginContainer/VBoxContainer/GridContainer"]
 margin_top = 5.0
-margin_right = 218.0
+margin_right = 274.0
 margin_bottom = 53.0
 custom_fonts/font = SubResource( 1 )
 text = "IP Address:"
 
 [node name="IPAddr" type="LineEdit" parent="MarginContainer/VBoxContainer/GridContainer"]
-margin_left = 268.0
-margin_right = 386.0
+margin_left = 324.0
+margin_right = 442.0
 margin_bottom = 58.0
 custom_fonts/font = SubResource( 1 )
 align = 1
@@ -81,54 +81,72 @@ expand_to_text_length = true
 
 [node name="Label2" type="Label" parent="MarginContainer/VBoxContainer/GridContainer"]
 margin_top = 73.0
-margin_right = 218.0
+margin_right = 274.0
 margin_bottom = 121.0
 custom_fonts/font = SubResource( 1 )
 text = "Port:"
 
 [node name="Port" type="LineEdit" parent="MarginContainer/VBoxContainer/GridContainer"]
-margin_left = 268.0
+margin_left = 324.0
 margin_top = 68.0
-margin_right = 386.0
+margin_right = 442.0
 margin_bottom = 126.0
 custom_fonts/font = SubResource( 1 )
 expand_to_text_length = true
 
-[node name="Host" type="Button" parent="MarginContainer/VBoxContainer"]
+[node name="Label3" type="Label" parent="MarginContainer/VBoxContainer/GridContainer"]
 margin_top = 141.0
+margin_right = 274.0
+margin_bottom = 189.0
+custom_fonts/font = SubResource( 1 )
+text = "Delay Frames:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="DelayFrames" type="LineEdit" parent="MarginContainer/VBoxContainer/GridContainer"]
+margin_left = 324.0
+margin_top = 136.0
+margin_right = 442.0
+margin_bottom = 194.0
+custom_fonts/font = SubResource( 1 )
+expand_to_text_length = true
+
+[node name="Host" type="Button" parent="MarginContainer/VBoxContainer"]
+margin_top = 209.0
 margin_right = 825.0
-margin_bottom = 195.0
+margin_bottom = 263.0
 custom_fonts/font = SubResource( 1 )
 text = "Host"
 
 [node name="Join" type="Button" parent="MarginContainer/VBoxContainer"]
-margin_top = 210.0
+margin_top = 278.0
 margin_right = 825.0
-margin_bottom = 264.0
+margin_bottom = 332.0
 custom_fonts/font = SubResource( 1 )
 text = "Join"
 
 [node name="GetIP" type="Button" parent="MarginContainer/VBoxContainer"]
-margin_top = 279.0
+margin_top = 347.0
 margin_right = 825.0
-margin_bottom = 323.0
+margin_bottom = 391.0
 custom_fonts/font = SubResource( 2 )
 text = "Get your IPv4"
 
 [node name="Status" type="Label" parent="MarginContainer/VBoxContainer"]
-margin_top = 338.0
+margin_top = 406.0
 margin_right = 825.0
-margin_bottom = 375.0
+margin_bottom = 443.0
 custom_fonts/font = SubResource( 3 )
 align = 1
 
 [node name="Back" type="Button" parent="."]
 anchor_right = 0.033
 anchor_bottom = 0.078
-margin_left = 103.122
-margin_top = 470.296
-margin_right = 185.33
-margin_bottom = 467.496
+margin_left = 101.066
+margin_top = 506.148
+margin_right = 183.274
+margin_bottom = 503.348
 custom_fonts/font = SubResource( 4 )
 text = "back"
 __meta__ = {
