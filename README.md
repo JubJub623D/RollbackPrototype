@@ -1,8 +1,8 @@
-![rollback_diagram](https://user-images.githubusercontent.com/41028399/160308341-fb4d0c51-254a-402c-b0d9-659868e41a64.png)
-
 # RollbackPrototype
 A barebones prototype of a fighting game written in GDScript (Godot's scripting language) that aims to incorporate rollback netcode by integrating GGPO. 
 Rollback works to decrease the effects of latency on input timing by ignoring delay using predictive inputs. If any of the predicted inputs do not match to the actual, delayed inputs when they arrive, the gamestate rolls back (hence the name) and resimulates itself using the actual inputs, updating to the correct gamestate as soon as possible after the actual inputs arrive.
+
+![rollback_diagram](https://user-images.githubusercontent.com/41028399/160308341-fb4d0c51-254a-402c-b0d9-659868e41a64.png)
 
 ### CONTROLS: 
 The mouse and left-click buttons are used to navigate menus. When in the Online Versus menu, the keyboard will be necessary to set IP, port, and desired delay frames.
