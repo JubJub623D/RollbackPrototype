@@ -26,7 +26,7 @@ Necessary Design Elements:
 The rollback integration in this game was made possible by the original open-source GGPO library and FlutterTal's GodotGGPO module.
 
 ### FUTURE IMPROVEMENTS:
- - Get rid of the cause of leaked StreamBuffers once the GGPO connection is closed
+ - Get rid of the cause of leaked StreamBuffers once the GGPO connection is closed.
 For a reason unknown to me, whenever RollbackPrototype closes a GGPO connection, eight StreamBuffers leak, meaning that they are not properly deallocated before the GGPO connection is closed. This seems peculiar, because GGPO should automatically close any allocated buffers using a callback event that activates whenever the connection is closed. This is the number one priority to fix, as it seems unacceptable that playing online should consistently leak resources.
- - Replace the floating-point positional math with fixed-point math, allowing for perfect determinism
+ - Replace the floating-point positional math with fixed-point math, allowing for perfect determinism.
 As floating-point math is not perfectly deterministic across different systems, it is possible (even if improbable) for differences in floating-point calculations to cause desyncs between two connected gamestates. To reduce the possible causes for desyncs, I need to find a way to reconfigure Godot Engine's physics to use fixed-point math, which is perfectly deterministic across different systems.
