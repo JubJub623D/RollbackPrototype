@@ -23,7 +23,7 @@ Necessary Design Elements:
 - Low-cost state-resimulation: Whenever the game receives inputs that force it to rollback, the corrected gamestate should be shown to the player on the next frame. To achieve this, gamestate resimulation should be as resource-light and quick as possible. Preferably, resimulating the state should be divorced from any front-end updates until the state is fully resimulated. 
 
 ### HOW:
-The rollback integration in this game was made possible by the original open-source GGPO library and FlutterTal's GodotGGPO module.
+The rollback integration in this game was made possible by the original open-source GGPO SDK and FlutterTal's GodotGGPO module.
 
 ### FUTURE IMPROVEMENTS:
  - Get rid of the cause of leaked StreamBuffers once the GGPO connection is closed.
